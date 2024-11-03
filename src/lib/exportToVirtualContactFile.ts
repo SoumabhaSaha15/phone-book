@@ -15,9 +15,11 @@ export const exportToVirtualContactFile = async (): Promise<void> => {
         Card.email = item.email;
       if (item.birthday !== null)
         Card.birthday = new Date(item.birthday);
-      const address = addressObject.safeParse(JSON.parse(item.address || "") || "");
-      if (item.address !== null && address.success)
-        Card.homeAddress = address.data;
+      if (item.address !== null) {
+        const address = addressObject.safeParse(JSON.parse(item.address || "") || "");
+        if (address.success)
+          Card.homeAddress = address.data;
+      }
       Card.saveToFile(`./exports/${item.firstName + '@uid' + item.id}.vcf`);
     }
   );

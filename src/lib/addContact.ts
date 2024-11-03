@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { Contact, ContactValidator, addressObject } from "../db/schema.js";
 import db from "../db/index.js";
 import PS from "prompt-sync";
+import chalkAnimation from "chalk-animation";
 import { z, ZodError } from "zod"
 import { eq } from "drizzle-orm";
 const addContact = async (): Promise<void> => {
@@ -89,8 +90,12 @@ const addContact = async (): Promise<void> => {
       const result = await db.insert(Contact).values({...getData,address:stringified_address}).execute();
       const lastInserted = ((await db.select().from(Contact).where(eq(Contact.id, result.lastInsertRowid as number))))[0];
       console.clear();
-      console.log(chalk.bgBlue.black.bold(`Contact successfully added, id: ${result.lastInsertRowid}.`));
+      const rainbow = chalkAnimation.rainbow(`Contact successfully added, id: ${result.lastInsertRowid}.`);
+      console.log(rainbow);
       console.log(chalk.bgBlack.greenBright.bold(`${JSON.stringify(lastInserted, null, "\t")}.`));
+      setTimeout(()=>{
+        rainbow.stop();
+      },2000);
     } catch (err) {
       console.log(chalk.red.bold(JSON.stringify(err, null, "\t")));
     }
