@@ -5,6 +5,7 @@ import db from "../db/index.js";
 import chalkAnimation from "chalk-animation";
 import { z, ZodError } from "zod"
 import { eq } from "drizzle-orm";
+import figlet from "figlet";
 const addContact = async (): Promise<void> => {
 
 
@@ -94,7 +95,7 @@ const addContact = async (): Promise<void> => {
       }
     },
   ]);
-  
+
   inquirer.prompt([{
     type: "list",
     name: "confirm",
@@ -102,7 +103,7 @@ const addContact = async (): Promise<void> => {
     choices: ['Yes', 'No'],
     default: 'No'
   }]).then(async (data) => {
-    
+
     if (data.confirm === 'Yes') {
       getData.address = await inquirer.prompt<z.infer<typeof addressObject>>([
         {
@@ -203,31 +204,59 @@ const addContact = async (): Promise<void> => {
     if (getData.birthday === '') {
       getData.birthday = null;
     }
-    console.table(getData);
-  });
 
-  
+    try {
+      ContactValidator.parse(getData);
+      try {
+        const stringified_address = getData.address ? (JSON.stringify(getData.address)) : (null);
+        const result = await db.insert(Contact).values({ ...getData, address: stringified_address }).execute();
+        const lastInserted = (
+          await db
+            .select()
+            .from(Contact)
+            .where(eq(Contact.id, result.lastInsertRowid as number))
+        )[0];
+        console.clear();
+        console.log(
+          chalk
+            .bgBlack
+            .greenBright
+            .bold(
+              `Contact successfully added, id: ${result.lastInsertRowid
+              }.\n${JSON.stringify(
+                {
+                  ...lastInserted,
+                  address: JSON.parse(lastInserted.address || '')
+                },
+                null,
+                "\t"
+              )
+              }.`
+            )
+        );
+
+      } catch (err) {
+        console.log(chalk.red.bold(JSON.stringify(err, null, "\t")));
+      }
+    } catch (error) {
+      let err = (error as ZodError);
+      console.log(chalk.red.bold(JSON.stringify(err, null, "\t")))
+    }
+
+  }).finally(() => {
+    const rainbow = chalkAnimation.rainbow(
+      figlet
+        .textSync(
+          'Process ended.',
+          { whitespaceBreak: true }
+        )
+    );
+    setTimeout(() => {
+      rainbow.stop();
+    }, 2000);
+  }
+  );
 
 
-  // try {
-  //   ContactValidator.parse(getData);
-  //   try {
-  //     const stringified_address = getData.address ? (JSON.stringify(getData.address)) : (null);
-  //     const result = await db.insert(Contact).values({ ...getData, address: stringified_address }).execute();
-  //     const lastInserted = ((await db.select().from(Contact).where(eq(Contact.id, result.lastInsertRowid as number))))[0];
-  //     console.clear();
-  //     const rainbow = chalkAnimation.rainbow(`Contact successfully added, id: ${result.lastInsertRowid}.`);
-  //     console.log(rainbow);
-  //     console.log(chalk.bgBlack.greenBright.bold(`${JSON.stringify(lastInserted, null, "\t")}.`));
-  //     setTimeout(() => {
-  //       rainbow.stop();
-  //     }, 2000);
-  //   } catch (err) {
-  //     console.log(chalk.red.bold(JSON.stringify(err, null, "\t")));
-  //   }
-  // } catch (error) {
-  //   let err = (error as ZodError);
-  //   console.log(chalk.red.bold(JSON.stringify(err, null, "\t")))
-  // }
 };
 export default addContact;
