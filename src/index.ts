@@ -27,7 +27,7 @@ try {
             break;
           case Menu[4]:
               console.log(chalk.bgBlue.white(" Exporting a contact. "));
-              PhoneBook.exportToVirtualContactFile();
+              PhoneBook.exportAllToVirtualContactFile();
           default:
             console.log(console.log(chalk.red.bold("Invalid option!!!\n Process terminated.")));
             process.exit(0);

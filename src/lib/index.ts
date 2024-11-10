@@ -1,3 +1,3 @@
 import addContact from "./addContact.js";
-import { exportToVirtualContactFile } from "./exportToVirtualContactFile.js";
-export default { addContact ,exportToVirtualContactFile};
+import { exportAllToVirtualContactFile } from "./exportAllToVirtualContactFile.js";
+export default { addContact ,exportAllToVirtualContactFile};

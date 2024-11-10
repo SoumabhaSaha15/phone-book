@@ -1,7 +1,7 @@
 import vcard from "vcards-js";
 import db from "../db/index.js";
 import { Contact, addressObject } from "../db/schema.js";
-export const exportToVirtualContactFile = async (): Promise<void> => {
+export const exportAllToVirtualContactFile = async (): Promise<void> => {
   const result = await db.select().from(Contact);
   result.forEach(
     (item) => {
