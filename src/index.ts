@@ -21,17 +21,26 @@ try {
       .then(data => {
         console.clear();
         switch (data.Choise) {
-          case Menu[0]:
+          case Menu[0]: {
             console.log(chalk.bgBlue.white(" Adding a contact. "));
             PhoneBook.addContact();
             break;
-          case Menu[4]:
-              console.log(chalk.bgBlue.white(" Exporting a contact. "));
-              PhoneBook.exportAllToVirtualContactFile();
-          default:
+          }
+          case Menu[2]: {
+            console.log(chalk.bgBlue.white("Searchong a contact. "));
+            PhoneBook.searchContact();
+            break;
+          }
+          case Menu[4]: {
+            console.log(chalk.bgBlue.white(" Exporting a contact. "));
+            PhoneBook.exportAllToVirtualContactFile();
+            break;
+          }
+          default: {
             console.log(console.log(chalk.red.bold("Invalid option!!!\n Process terminated.")));
             process.exit(0);
             break;
+          }
         }
       });
   }

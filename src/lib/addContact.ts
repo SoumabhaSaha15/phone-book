@@ -6,6 +6,7 @@ import chalkAnimation from "chalk-animation";
 import { z, ZodError } from "zod"
 import { eq } from "drizzle-orm";
 import figlet from "figlet";
+import Database from "better-sqlite3";
 const addContact = async (): Promise<void> => {
 
 
@@ -209,14 +210,18 @@ const addContact = async (): Promise<void> => {
       ContactValidator.parse(getData);
       try {
         const stringified_address = getData.address ? (JSON.stringify(getData.address)) : (null);
-        const result = await db.insert(Contact).values({ ...getData, address: stringified_address }).execute();
+        let result:Database.RunResult;
+        if(stringified_address==null)
+          result = await db.insert(Contact).values({...getData,address:null}).execute();
+        else
+          result = await db.insert(Contact).values({...getData,address:stringified_address}).execute()
+        console.clear();
         const lastInserted = (
           await db
             .select()
             .from(Contact)
             .where(eq(Contact.id, result.lastInsertRowid as number))
         )[0];
-        console.clear();
         console.log(
           chalk
             .bgBlack
@@ -226,7 +231,7 @@ const addContact = async (): Promise<void> => {
               }.\n${JSON.stringify(
                 {
                   ...lastInserted,
-                  address: JSON.parse(lastInserted.address || '')
+                  address: (stringified_address!=null)?JSON.parse(lastInserted.address||''):(null)
                 },
                 null,
                 "\t"
