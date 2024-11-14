@@ -1,12 +1,10 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import db from "../db/index.js";
-import PS from "prompt-sync";
-import { Contact, ContactValidator } from "../db/schema.js";
+import { Contact } from "../db/schema.js";
 import figlet from "figlet";
 import { like ,eq} from "drizzle-orm";
-export const searchContact = async (): Promise<void> => {
-  // const prompt = PS();
+const searchContact = async (): Promise<void> => {
 
   const searchByPhoneNumber = async () => {
     await inquirer.prompt([{
@@ -34,6 +32,7 @@ export const searchContact = async (): Promise<void> => {
       }
     }]);
   }
+  
   const searchByFirstName = async () => {
     await inquirer.prompt([{
       type: "input",
@@ -61,6 +60,7 @@ export const searchContact = async (): Promise<void> => {
       }
     }]);
   }
+
   const searchByLastName = async () => {
     await inquirer.prompt([{
       type: "input",
@@ -87,6 +87,7 @@ export const searchContact = async (): Promise<void> => {
       }
     }]);
   }
+  
   /**
    * searches by id (primary key) in the database
   */
@@ -118,6 +119,7 @@ export const searchContact = async (): Promise<void> => {
       }
     }]);
   }
+  
   const INDEXES = ["phoneNumber", "firstName", "lastName", "UniqueId"];
   const searchIndex = await inquirer.prompt<{ searchKey: string }>([{
     type: "list",
@@ -153,3 +155,4 @@ export const searchContact = async (): Promise<void> => {
     console.log(chalk.red.bold(figlet.textSync("Error", { whitespaceBreak: true })));
   })
 }
+export default searchContact;

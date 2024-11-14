@@ -34,11 +34,11 @@ try {
           }
           case Menu[4]: {
             console.log(chalk.bgBlue.white(" Exporting a contact. "));
-            PhoneBook.exportAllToVirtualContactFile();
+            PhoneBook.exportSelectedContact();
             break;
           }
           default: {
-            console.log(console.log(chalk.red.bold("Invalid option!!!\n Process terminated.")));
+            console.log(chalk.red.bold("Invalid option!!!\n Process terminated."));
             process.exit(0);
             break;
           }
