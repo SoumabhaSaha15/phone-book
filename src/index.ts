@@ -4,6 +4,7 @@ import inquirer from "inquirer";
 import figlet from "figlet";
 import PhoneBook from "./lib/index.js";
 try {
+  console.clear();
   const Menu = ["Add a contact", "Delete contact", "Search contact", "Edit a contact", "Export contact", "Import contact"];
   const wellcomeAnimation = chalkAnimation.rainbow(figlet.textSync("PHONE  -  BOOK", {
     font: "Banner",
@@ -27,7 +28,7 @@ try {
             break;
           }
           case Menu[2]: {
-            console.log(chalk.bgBlue.white("Searchong a contact. "));
+            console.log(chalk.bgBlue.white("Searching a contact. "));
             PhoneBook.searchContact();
             break;
           }

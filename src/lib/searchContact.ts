@@ -4,9 +4,10 @@ import db from "../db/index.js";
 import PS from "prompt-sync";
 import { Contact, ContactValidator } from "../db/schema.js";
 import figlet from "figlet";
-import { like } from "drizzle-orm";
+import { like ,eq} from "drizzle-orm";
 export const searchContact = async (): Promise<void> => {
   // const prompt = PS();
+
   const searchByPhoneNumber = async () => {
     await inquirer.prompt([{
       type: "input",
@@ -14,21 +15,16 @@ export const searchContact = async (): Promise<void> => {
       message: chalk.blue.bold("Enter phone number to search (type '$exit' to exit process): "),
       validate: async (search: string) => {
         if (search == '$exit') {
+          console.clear();
           process.exit(0);
-          return true;
         } else {
-          let resultSet = await db
-            .select()
-            .from(Contact)
-            .where(like(Contact.phoneNumber, `%${search}%`))
-            .execute();
-          resultSet = resultSet.map((it) => {
-            if (it.address) {
-              return { ...it, address: JSON.parse(it.address) };
-            } else {
-              return { ...it };
-            }
-          });
+          let resultSet: string[] = (
+            await db
+              .select()
+              .from(Contact)
+              .where(like(Contact.phoneNumber, `%${search}%`))
+              .execute()
+          ).map(it => `${it.id}) Name: ${it.firstName} ${it.lastName}, Phone number: ${it.phoneNumber} .`);
           return (
             (resultSet.length) ?
               chalk.blue.bold(JSON.stringify(resultSet, null, 2)) :
@@ -47,20 +43,15 @@ export const searchContact = async (): Promise<void> => {
         if (search == '$exit') {
           console.clear();
           process.exit(0);
-          return true;
+          // return true;
         } else {
-          let resultSet = await db
-            .select()
-            .from(Contact)
-            .where(like(Contact.firstName, `%${search}%`))
-            .execute();
-          resultSet = resultSet.map((it) => {
-            if (it.address) {
-              return { ...it, address: JSON.parse(it.address) };
-            } else {
-              return { ...it };
-            }
-          });
+          let resultSet: string[] = (
+            await db
+              .select()
+              .from(Contact)
+              .where(like(Contact.firstName, `%${search}%`))
+              .execute()
+          ).map(it => `${it.id}) Name: ${it.firstName} ${it.lastName}, Phone number: ${it.phoneNumber} .`);
           return (
             (resultSet.length) ?
               chalk.blue.bold(JSON.stringify(resultSet, null, 2)) :
@@ -77,21 +68,16 @@ export const searchContact = async (): Promise<void> => {
       message: chalk.blue.bold("Enter last name to search (type '$exit' to exit process): "),
       validate: async (search: string) => {
         if (search == '$exit') {
+          console.clear();
           process.exit(0);
-          return true;
         } else {
-          let resultSet = await db
-            .select()
-            .from(Contact)
-            .where(like(Contact.firstName, `%${search}%`))
-            .execute();
-          resultSet = resultSet.map((it) => {
-            if (it.address) {
-              return { ...it, address: JSON.parse(it.address) };
-            } else {
-              return { ...it };
-            }
-          });
+          let resultSet: string[] = (
+            await db
+              .select()
+              .from(Contact)
+              .where(like(Contact.lastName, `%${search}%`))
+              .execute()
+          ).map(it => `${it.id}) Name: ${it.firstName} ${it.lastName}, Phone number: ${it.phoneNumber} .`);
           return (
             (resultSet.length) ?
               chalk.blue.bold(JSON.stringify(resultSet, null, 2)) :
@@ -101,7 +87,38 @@ export const searchContact = async (): Promise<void> => {
       }
     }]);
   }
-  const INDEXES = ["phoneNumber", "firstName", "lastName"];
+  /**
+   * searches by id (primary key) in the database
+  */
+  const searchByUniqueId = async () => {
+    await inquirer.prompt([{
+      type: "input",
+      name: "search",
+      message: chalk.blue.bold("Enter last name to search (type '$exit' to exit process): "),
+      validate: async (search: string) => {
+        if (search == '$exit') {
+          console.clear();
+          process.exit(0);
+        } else if(Number.isNaN(parseInt(search))){
+          return chalk.red.bold(`!!!invalid input,pls enter an number`);
+        } else {
+          let resultSet = (
+            await db
+              .select()
+              .from(Contact)
+              .where(eq(Contact.id,parseInt(search)))
+              .execute()
+          ).map(it => (it.address !== null) ? ({ ...it, address: JSON.parse(it.address) }) : it); //ternery expression converts json string into address object if address is not null
+          return (
+            (resultSet.length) ?
+              chalk.blue.bold(JSON.stringify(resultSet, null, 2)) :
+              chalk.red.bold("No record found")
+          );
+        }
+      }
+    }]);
+  }
+  const INDEXES = ["phoneNumber", "firstName", "lastName", "UniqueId"];
   const searchIndex = await inquirer.prompt<{ searchKey: string }>([{
     type: "list",
     name: "searchKey",
@@ -122,12 +139,17 @@ export const searchContact = async (): Promise<void> => {
       searchByLastName();
       break;
     }
+    case INDEXES[3]: {
+      console.log(chalk.yellow.bold(`This will give you full data.`));
+      searchByUniqueId();
+      break;
+    }
     default: {
       console.log(chalk.bgBlack.red.bold(`An error occured at line 25`));
       process.exit(0);
     }
   }
   process.on('beforeExit', () => {
-    console.log(chalk.blue.bold(figlet.textSync("Good bye.", { whitespaceBreak: true })));
+    console.log(chalk.red.bold(figlet.textSync("Error", { whitespaceBreak: true })));
   })
 }
