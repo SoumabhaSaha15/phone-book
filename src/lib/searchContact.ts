@@ -1,11 +1,12 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import db from "../db/index.js";
-import { Contact } from "../db/schema.js";
+import { Contact ,ContactObject} from "../db/schema.js";
 import figlet from "figlet";
 import { like ,eq} from "drizzle-orm";
-const searchContact = async (): Promise<void> => {
 
+const searchContact = async (): Promise<void> => {
+  const stringView = (it:ContactObject) => (`@uid:${it.id}) Name: ${it.firstName} ${it.lastName}, Phone number: ${it.phoneNumber} .`);
   const searchByPhoneNumber = async () => {
     await inquirer.prompt([{
       type: "input",
@@ -22,7 +23,7 @@ const searchContact = async (): Promise<void> => {
               .from(Contact)
               .where(like(Contact.phoneNumber, `%${search}%`))
               .execute()
-          ).map(it => `${it.id}) Name: ${it.firstName} ${it.lastName}, Phone number: ${it.phoneNumber} .`);
+          ).map(stringView);
           return (
             (resultSet.length) ?
               chalk.blue.bold(JSON.stringify(resultSet, null, 2)) :
@@ -50,7 +51,7 @@ const searchContact = async (): Promise<void> => {
               .from(Contact)
               .where(like(Contact.firstName, `%${search}%`))
               .execute()
-          ).map(it => `${it.id}) Name: ${it.firstName} ${it.lastName}, Phone number: ${it.phoneNumber} .`);
+          ).map(stringView);
           return (
             (resultSet.length) ?
               chalk.blue.bold(JSON.stringify(resultSet, null, 2)) :
@@ -77,7 +78,7 @@ const searchContact = async (): Promise<void> => {
               .from(Contact)
               .where(like(Contact.lastName, `%${search}%`))
               .execute()
-          ).map(it => `${it.id}) Name: ${it.firstName} ${it.lastName}, Phone number: ${it.phoneNumber} .`);
+          ).map(stringView);
           return (
             (resultSet.length) ?
               chalk.blue.bold(JSON.stringify(resultSet, null, 2)) :

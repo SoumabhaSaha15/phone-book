@@ -33,3 +33,14 @@ export const ContactValidator = z.strictObject({
   address: z.union([addressObject, z.null()]).optional(),
   birthday: z.union([z.string().date(), z.null()]).optional()
 });
+
+export type ContactObject = {
+  id: number;
+  firstName: string;
+  middleName: string | null;
+  lastName: string;
+  email: string | null;
+  phoneNumber: string;
+  address: string | null;
+  birthday: string | null;
+}

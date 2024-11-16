@@ -1,19 +1,9 @@
 import vcard from "vcards-js";
 import db from "../db/index.js";
-import { Contact, addressObject, ContactValidator } from "../db/schema.js";
+import { Contact, addressObject, ContactObject } from "../db/schema.js";
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { like, and } from "drizzle-orm";
-type ContactObject = {
-  id: number;
-  firstName: string;
-  middleName: string | null;
-  lastName: string;
-  email: string | null;
-  phoneNumber: string;
-  address: string | null;
-  birthday: string | null;
-}
 const createCard = (item: ContactObject) => {
   const Card = vcard();
   Card.firstName = item.firstName;
@@ -43,41 +33,46 @@ export const exportSelectedContact = async () => {
     choices: ["Yes", "No"],
     default: "Yes"
   }]);
+  type FilterObject = {
+    firstName: string,
+    lastName: string,
+    phoneNumber: string
+  }
   if (choice == "Yes") {
-    let filter = await inquirer.prompt<{
-      firstName: string,
-      lastName: string,
-      phoneNumber: string
-    }>([{
-      type: "input",
-      name: "firstName",
-      message: "Enter first name filter: ",
-    }, {
-      type: "input",
-      name: "lastName",
-      message: "Enter last name filter: ",
-    }, {
-      type: "input",
-      name: "phoneNumber",
-      message: "Enter ph-no filter: ",
-    }]);
+    let filter = await inquirer.prompt<FilterObject>([
+      { 
+        type: "input",
+        name: "firstName",
+        message: "Enter first name filter: ",
+      },
+      { 
+        type: "input",
+        name: "lastName",
+        message: "Enter last name filter: ",
+      },
+      { 
+        type: "input",
+        name: "phoneNumber",
+        message: "Enter ph-no filter: ",
+      }
+    ]);
     records = await db
       .select()
       .from(Contact)
       .where(
         and(
           and(
-            like(Contact.firstName,filter.firstName),
+            like(Contact.firstName, filter.firstName),
             like(Contact.lastName, filter.lastName)
           ),
           like(Contact.phoneNumber, filter.phoneNumber)
         )
       )
       .execute();
-      if(!records.length){
-        console.log(chalk.red.bold('No such records.'));
-        process.exit(0);
-      }
+    if (!records.length) {
+      console.log(chalk.red.bold('No such records.'));
+      process.exit(0);
+    }
   } else {
     records = await db
       .select()
