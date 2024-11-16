@@ -43,4 +43,4 @@ export type ContactObject = {
   phoneNumber: string;
   address: string | null;
   birthday: string | null;
-}
+};
