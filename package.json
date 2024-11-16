@@ -31,7 +31,7 @@
     "inquirer": "^12.0.1",
     "nanospinner": "^1.2.0",
     "prompt-sync": "^4.2.0",
-    "vcard-parser": "^1.0.0",
+    "vcard4-ts": "^0.4.1",
     "vcards-js": "^2.10.0",
     "zod": "^3.23.8"
   }

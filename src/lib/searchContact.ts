@@ -1,12 +1,12 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import db from "../db/index.js";
-import { Contact ,ContactObject} from "../db/schema.js";
+import { Contact, ContactObject } from "../db/schema.js";
 import figlet from "figlet";
-import { like ,eq} from "drizzle-orm";
+import { like, eq } from "drizzle-orm";
 
 const searchContact = async (): Promise<void> => {
-  const stringView = (it:ContactObject) => (`@uid:${it.id}) Name: ${it.firstName} ${it.lastName}, Phone number: ${it.phoneNumber} .`);
+  const stringView = (it: ContactObject) => (`@uid:${it.id}) Name: ${it.firstName} ${it.lastName}, Phone number: ${it.phoneNumber} .`);
   const searchByPhoneNumber = async () => {
     await inquirer.prompt([{
       type: "input",
@@ -33,7 +33,7 @@ const searchContact = async (): Promise<void> => {
       }
     }]);
   }
-  
+
   const searchByFirstName = async () => {
     await inquirer.prompt([{
       type: "input",
@@ -88,7 +88,7 @@ const searchContact = async (): Promise<void> => {
       }
     }]);
   }
-  
+
   /**
    * searches by id (primary key) in the database
   */
@@ -101,14 +101,14 @@ const searchContact = async (): Promise<void> => {
         if (search == '$exit') {
           console.clear();
           process.exit(0);
-        } else if(Number.isNaN(parseInt(search))){
+        } else if (Number.isNaN(parseInt(search))) {
           return chalk.red.bold(`!!!invalid input,pls enter an number`);
         } else {
           let resultSet = (
             await db
               .select()
               .from(Contact)
-              .where(eq(Contact.id,parseInt(search)))
+              .where(eq(Contact.id, parseInt(search)))
               .execute()
           ).map(it => (it.address !== null) ? ({ ...it, address: JSON.parse(it.address) }) : it); //ternery expression converts json string into address object if address is not null
           return (
@@ -120,7 +120,7 @@ const searchContact = async (): Promise<void> => {
       }
     }]);
   }
-  
+
   const INDEXES = ["phoneNumber", "firstName", "lastName", "UniqueId"];
   const searchIndex = await inquirer.prompt<{ searchKey: string }>([{
     type: "list",
