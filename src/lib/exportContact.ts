@@ -37,7 +37,7 @@ export const exportSelectedContact = async () => {
     firstName: string,
     lastName: string,
     phoneNumber: string
-  }
+  };
   if (choice == "Yes") {
     let filter = await inquirer.prompt<FilterObject>([
       { 
