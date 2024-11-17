@@ -19,9 +19,9 @@ try {
         name: "Choise",
         choices: Menu,
       }])
-      .then(data => {
+      .then(({Choise}) => {
         console.clear();
-        switch (data.Choise) {
+        switch (Choise) {
           case Menu[0]: {
             console.log(chalk.bgBlue.white(" Adding a contact. "));
             PhoneBook.addContact();

@@ -103,9 +103,9 @@ const addContact = async (): Promise<void> => {
     message: chalk.yellow.bold("Do you want to add an address??: "),
     choices: ['Yes', 'No'],
     default: 'No'
-  }]).then(async (data) => {
+  }]).then(async ({confirm}) => {
 
-    if (data.confirm === 'Yes') {
+    if (confirm === 'Yes') {
       getData.address = await inquirer.prompt<z.infer<typeof addressObject>>([
         {
           type: "input",

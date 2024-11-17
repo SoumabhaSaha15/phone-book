@@ -88,15 +88,15 @@ export const exportSelectedContact = async () => {
     Name: `${it.firstName} ${it.lastName}`,
     phoneNumber: it.phoneNumber
   }));
-  const selected = await inquirer.prompt<{ options: string[] }>([{
+  const {stringifiedOptions} = await inquirer.prompt<{ stringifiedOptions: string[] }>([{
     type: "checkbox",
-    name: "options",
+    name: "stringifiedOptions",
     message: "check contacts to export: ",
     choices: options.map(it => JSON.stringify(it)),
   }]);
 
   console.clear();
-  selected.options.forEach((value) => {
+  stringifiedOptions.forEach((value) => {
     try {
       const id: number | null = JSON.parse(value)?.id || null;
       if (id != null)

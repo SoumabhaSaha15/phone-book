@@ -122,14 +122,14 @@ const searchContact = async (): Promise<void> => {
   }
 
   const INDEXES = ["phoneNumber", "firstName", "lastName", "UniqueId"];
-  const searchIndex = await inquirer.prompt<{ searchKey: string }>([{
+  const {searchKey} = await inquirer.prompt<{ searchKey: string }>([{
     type: "list",
     name: "searchKey",
     message: chalk.yellow.bold("Select the index you want to search with:-"),
     choices: INDEXES,
     default: INDEXES[0]
   }]);
-  switch (searchIndex.searchKey) {
+  switch (searchKey) {
     case INDEXES[0]: {
       searchByPhoneNumber();
       break;
