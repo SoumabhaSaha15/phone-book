@@ -27,14 +27,24 @@ try {
             PhoneBook.addContact();
             break;
           }
+          case Menu[1]: {
+            console.log(chalk.bgBlue.white(" Deleting contact. "));
+            PhoneBook.deleteContact();
+            break;
+          }
           case Menu[2]: {
-            console.log(chalk.bgBlue.white("Searching a contact. "));
+            console.log(chalk.bgBlue.white(" Searching a contact. "));
             PhoneBook.searchContact();
             break;
           }
           case Menu[4]: {
             console.log(chalk.bgBlue.white(" Exporting a contact. "));
             PhoneBook.exportSelectedContact();
+            break;
+          }
+          case Menu[5]: {
+            console.log(chalk.bgBlue.white(" Importing contact. "));
+            PhoneBook.importContacts();
             break;
           }
           default: {
