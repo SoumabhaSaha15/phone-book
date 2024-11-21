@@ -37,6 +37,11 @@ try {
             PhoneBook.searchContact();
             break;
           }
+          case Menu[3]:{
+            console.log(chalk.bgBlue.white("editing a contact"));
+            PhoneBook.editContact();
+            break;
+          }
           case Menu[4]: {
             console.log(chalk.bgBlue.white(" Exporting a contact. "));
             PhoneBook.exportSelectedContact();
