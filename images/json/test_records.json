@@ -1,0 +1,134 @@
+[
+  {
+    "firstName": "Alex",
+    "lastName": "Miller",
+    "email": "alex.miller@mail.com",
+    "phoneNumber": "+12345678901",
+    "address": {
+      "city": "Los Angeles",
+      "countryRegion": "USA",
+      "label": "Home Address",
+      "postalCode": "90001",
+      "stateProvince": "CA",
+      "street": "Hollywood Boulevard"
+    },
+    "birthday": "1995-03-12"
+  },
+  {
+    "firstName": "Eva",
+    "lastName": "Schmidt",
+    "phoneNumber": "+491634567890",
+    "address": null,
+    "birthday": null
+  },
+  {
+    "firstName": "David",
+    "lastName": "Kim",
+    "email": "david.kim@gmail.com",
+    "phoneNumber": "+821023456789",
+    "address": {
+      "city": "Seoul",
+      "countryRegion": "South Korea",
+      "label": "Work Address",
+      "postalCode": "060-010",
+      "stateProvince": "Seoul",
+      "street": "Gangnam Boulevard"
+    },
+    "birthday": "1988-07-21"
+  },
+  {
+    "firstName": "Maria",
+    "lastName": "Garcia",
+    "phoneNumber": "+34654321098",
+    "address": {
+      "city": "Madrid",
+      "countryRegion": "Spain",
+      "label": "Home Address",
+      "postalCode": "28001",
+      "stateProvince": "Madrid",
+      "street": "Gran Via"
+    },
+    "birthday": "1982-11-05"
+  },
+  {
+    "firstName": "Luca",
+    "lastName": "Rossi",
+    "email": "luca.rossi@outlook.it",
+    "phoneNumber": "+393456789012",
+    "address": {
+      "city": "Rome",
+      "countryRegion": "Italy",
+      "label": "Home Address",
+      "postalCode": "00186",
+      "stateProvince": "Lazio",
+      "street": "Via Veneto"
+    },
+    "birthday": "1991-04-08"
+  },
+  {
+    "firstName": "JohnDoe123",
+    "lastName": "Smith456",
+    "email": "johndoe@example.com",
+    "phoneNumber": "+1234567890",
+    "address": {
+      "city": "New York",
+      "countryRegion": "USA",
+      "label": "Home Address",
+      "postalCode": "10001",
+      "stateProvince": "NY",
+      "street": "123 Main St"
+    },
+    "birthday": "1990-01-01"
+  },
+  {
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "phoneNumber": "+447987654321",
+    "address": null,
+    "birthday": null
+  },
+  {
+    "firstName": "Alice",
+    "lastName": "Johnson",
+    "email": "alice.johnson@mail.com",
+    "phoneNumber": "+819012345678",
+    "address": {
+      "city": "Tokyo",
+      "countryRegion": "Japan",
+      "label": "Work Address",
+      "postalCode": "100-0001",
+      "stateProvince": "Tokyo",
+      "street": "Shibuya Crossing"
+    },
+    "birthday": "1985-05-15"
+  },
+  {
+    "firstName": "Bob",
+    "lastName": "Smith",
+    "phoneNumber": "+61432109876",
+    "address": {
+      "city": "Sydney",
+      "countryRegion": "Australia",
+      "label": "Home Address",
+      "postalCode": "2000",
+      "stateProvince": "New South Wales",
+      "street": "George Street"
+    },
+    "birthday": "1978-12-25"
+  },
+  {
+    "firstName": "Charlie",
+    "lastName": "Brown",
+    "email": "charlie.brown@email.org",
+    "phoneNumber": "+33678901234",
+    "address": {
+      "city": "Paris",
+      "countryRegion": "France",
+      "label": "Home Address",
+      "postalCode": "75001",
+      "stateProvince": "/u00Cfle-de-France",
+      "street": "Champs-/u00C9lys/u00E9es"
+    },
+    "birthday": "1992-09-10"
+  }
+]

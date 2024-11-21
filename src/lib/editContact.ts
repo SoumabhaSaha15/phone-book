@@ -1,7 +1,7 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import db from "../db/index.js";
-import { string, z } from "zod";
+import {  z } from "zod";
 import { Contact, ContactObject, ContactValidator } from "../db/schema.js";
 import { like, and, eq } from "drizzle-orm";
 const editContact = async (): Promise<void> => {
@@ -79,11 +79,11 @@ const editContact = async (): Promise<void> => {
                 type: "editor",
                 default: JSON.stringify(it, null, 2),
                 name: "editable",
-                message: ""
+                message: `edit ${item.firstName}'s contact`,
               }])
               .then(({ editable }) => {
                 let edited = JSON.parse(editable);
-                (edited["id"]) ? ((() => { delete edited.id; })()) : ((() => { })());
+                (edited["id"]) ? ((() => { delete edited.id; })()) : ((() => { })()); //empty function
                 if (edited["address"] !== null) {
                   if (typeof edited["address"] == "string") {
                     edited["address"] = JSON.parse(edited["address"]);
@@ -101,11 +101,11 @@ const editContact = async (): Promise<void> => {
                   });
               })
               .catch((err: { message: string }) => {
-                console.log(chalk.red.bold(err.message))
+                console.log(chalk.red.bold(err.message));
               });
           });
-    } catch (e) {
-      console.log(chalk.red.bold(e));
+    } catch (err) {
+      console.log(chalk.red.bold((err as {message:string}).message));
     }
   });
 }
