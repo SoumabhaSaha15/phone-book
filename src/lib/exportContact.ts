@@ -75,9 +75,13 @@ export const exportSelectedContact = async () => {
     }
   } else {
     records = await db
-      .select()
-      .from(Contact)
-      .execute();
+    .select()
+    .from(Contact)
+    .execute();
+    if (!records.length) {
+      console.log(chalk.red.bold('No such records.'));
+      process.exit(0);
+    }
   }
   const options = records.map(it => (it.middleName != null) ? ({
     id: it.id,
