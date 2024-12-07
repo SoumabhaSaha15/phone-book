@@ -1,33 +1,12 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import db from "../db/index.js";
-import {  z } from "zod";
-import { Contact, ContactObject, ContactValidator } from "../db/schema.js";
+import { z } from "zod";
+import { Contact, ContactObject, ContactValidator, RecordFilter, getFilter } from "../db/schema.js";
 import { like, and, eq } from "drizzle-orm";
 const editContact = async (): Promise<void> => {
   let records: ContactObject[];
-  type FilterObject = {
-    firstName: string,
-    lastName: string,
-    phoneNumber: string
-  };
-  let filter = await inquirer.prompt<FilterObject>([
-    {
-      type: "input",
-      name: "firstName",
-      message: "Enter first name filter: ",
-    },
-    {
-      type: "input",
-      name: "lastName",
-      message: "Enter last name filter: ",
-    },
-    {
-      type: "input",
-      name: "phoneNumber",
-      message: "Enter ph-no filter: ",
-    }
-  ]);
+  let filter: RecordFilter = await getFilter();
   records = await db
     .select()
     .from(Contact)
@@ -105,7 +84,7 @@ const editContact = async (): Promise<void> => {
               });
           });
     } catch (err) {
-      console.log(chalk.red.bold((err as {message:string}).message));
+      console.log(chalk.red.bold((err as { message: string }).message));
     }
   });
 }

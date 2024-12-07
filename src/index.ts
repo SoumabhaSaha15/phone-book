@@ -2,8 +2,7 @@ import chalk from "chalk";
 import chalkAnimation from "chalk-animation";
 import inquirer from "inquirer";
 import figlet from "figlet";
-import Menu from "./lib/menu.js";
-import { MenuString } from "./lib/menu.js";
+import Menu, { MenuString } from "./lib/menu.js";
 try {
   console.clear();
   const wellcomeAnimation = chalkAnimation.rainbow(figlet.textSync("PHONE  -  BOOK", { font: "Banner", whitespaceBreak: true }));
@@ -19,7 +18,7 @@ try {
     try {
       Menu[Choise]();
     } catch (e) {
-      console.log(chalk.red(figlet.textSync("Invalid Choise !!!", { font: "Banner", whitespaceBreak: true }),`\n ${(e as Error).message}`));
+      console.log(chalk.red(figlet.textSync("Invalid Choise !!!", { font: "Banner", whitespaceBreak: true }), `\n ${(e as Error).message}`));
     }
 
   }

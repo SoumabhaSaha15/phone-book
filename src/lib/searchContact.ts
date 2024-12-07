@@ -7,6 +7,7 @@ import { like, eq } from "drizzle-orm";
 
 const searchContact = async (): Promise<void> => {
   const stringView = (it: ContactObject) => (`@uid:${it.id}) Name: ${it.firstName} ${it.lastName}, Phone number: ${it.phoneNumber} .`);
+  
   const searchByPhoneNumber = async () => {
     await inquirer.prompt([{
       type: "input",
@@ -88,11 +89,9 @@ const searchContact = async (): Promise<void> => {
       }
     }]);
   }
-
-  /**
-   * searches by id (primary key) in the database
-  */
+  //searches by id (primary key) in the database
   const searchByUniqueId = async () => {
+    console.log(chalk.yellow.bold(`This will give you full detail.`));
     await inquirer.prompt([{
       type: "input",
       name: "search",
@@ -121,36 +120,24 @@ const searchContact = async (): Promise<void> => {
     }]);
   }
 
-  const INDEXES = ["phoneNumber", "firstName", "lastName", "UniqueId"];
-  const {searchKey} = await inquirer.prompt<{ searchKey: string }>([{
+  const INDEXES: Record<string, Function> = {
+    "phoneNumber": searchByPhoneNumber,
+    "firstName": searchByFirstName,
+    "lastName": searchByLastName,
+    "UniqueId": searchByUniqueId
+  }
+  const { searchKey } = await inquirer.prompt<{ searchKey: string }>([{
     type: "list",
     name: "searchKey",
     message: chalk.yellow.bold("Select the index you want to search with:-"),
-    choices: INDEXES,
-    default: INDEXES[0]
+    choices: Object.keys(INDEXES),
+    default: "phoneNumber"
   }]);
-  switch (searchKey) {
-    case INDEXES[0]: {
-      searchByPhoneNumber();
-      break;
-    }
-    case INDEXES[1]: {
-      searchByFirstName();
-      break;
-    }
-    case INDEXES[2]: {
-      searchByLastName();
-      break;
-    }
-    case INDEXES[3]: {
-      console.log(chalk.yellow.bold(`This will give you full data.`));
-      searchByUniqueId();
-      break;
-    }
-    default: {
-      console.log(chalk.bgBlack.red.bold(`An error occured at line 25`));
-      process.exit(0);
-    }
+  try {
+    INDEXES[searchKey]();
+  } catch (e) {
+    console.log(chalk.bgBlack.red.bold((e as Error).message));
+    process.exit(0);
   }
   process.on('beforeExit', () => {
     console.log(chalk.red.bold(figlet.textSync("Error", { whitespaceBreak: true })));

@@ -1,31 +1,10 @@
 import db from "../db/index.js";
-import { Contact } from "../db/schema.js";
+import { Contact, RecordFilter, getFilter } from "../db/schema.js";
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { and, like, eq } from "drizzle-orm";
 const deleteContact = async (): Promise<void> => {
-  type FilterObject = {
-    firstName: string,
-    lastName: string,
-    phoneNumber: string
-  };
-  let filter = await inquirer.prompt<FilterObject>([
-    {
-      type: "input",
-      name: "firstName",
-      message: "Enter first name filter: ",
-    },
-    {
-      type: "input",
-      name: "lastName",
-      message: "Enter last name filter: ",
-    },
-    {
-      type: "input",
-      name: "phoneNumber",
-      message: "Enter ph-no filter: ",
-    }
-  ]);
+  let filter: RecordFilter = await getFilter();
   const records = await db
     .select()
     .from(Contact)

@@ -1,5 +1,6 @@
 import { integer, text, sqliteTable, } from "drizzle-orm/sqlite-core";
 import { z } from "zod";
+import inquirer from "inquirer";
 export const Contact = sqliteTable('Contact', {
   id: integer("id").primaryKey({ autoIncrement: true }),
   firstName: text("firstName").notNull(),
@@ -45,4 +46,28 @@ export type ContactObject = {
   birthday: string | null;
 };
 
-export const recordFilter ={};
+export type RecordFilter = {
+  firstName: string,
+  lastName: string,
+  phoneNumber: string
+};
+export const getFilter = async () => {
+  let filter: RecordFilter = await inquirer.prompt<RecordFilter>([
+    {
+      type: "input",
+      name: "firstName",
+      message: "Enter first name filter: ",
+    },
+    {
+      type: "input",
+      name: "lastName",
+      message: "Enter last name filter: ",
+    },
+    {
+      type: "input",
+      name: "phoneNumber",
+      message: "Enter ph-no filter: ",
+    }
+  ]);
+  return filter;
+}

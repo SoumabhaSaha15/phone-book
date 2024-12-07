@@ -1,6 +1,6 @@
 import vcard from "vcards-js";
 import db from "../db/index.js";
-import { Contact, addressObject, ContactObject } from "../db/schema.js";
+import { Contact, addressObject, ContactObject, RecordFilter, getFilter } from "../db/schema.js";
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { like, and } from "drizzle-orm";
@@ -33,29 +33,9 @@ export const exportSelectedContact = async () => {
     choices: ["Yes", "No"],
     default: "Yes"
   }]);
-  type FilterObject = {
-    firstName: string,
-    lastName: string,
-    phoneNumber: string
-  };
+
   if (choice == "Yes") {
-    let filter = await inquirer.prompt<FilterObject>([
-      { 
-        type: "input",
-        name: "firstName",
-        message: "Enter first name filter: ",
-      },
-      { 
-        type: "input",
-        name: "lastName",
-        message: "Enter last name filter: ",
-      },
-      { 
-        type: "input",
-        name: "phoneNumber",
-        message: "Enter ph-no filter: ",
-      }
-    ]);
+    let filter: RecordFilter = await getFilter();
     records = await db
       .select()
       .from(Contact)
@@ -75,9 +55,9 @@ export const exportSelectedContact = async () => {
     }
   } else {
     records = await db
-    .select()
-    .from(Contact)
-    .execute();
+      .select()
+      .from(Contact)
+      .execute();
     if (!records.length) {
       console.log(chalk.red.bold('No such records.'));
       process.exit(0);
@@ -92,7 +72,7 @@ export const exportSelectedContact = async () => {
     Name: `${it.firstName} ${it.lastName}`,
     phoneNumber: it.phoneNumber
   }));
-  const {stringifiedOptions} = await inquirer.prompt<{ stringifiedOptions: string[] }>([{
+  const { stringifiedOptions } = await inquirer.prompt<{ stringifiedOptions: string[] }>([{
     type: "checkbox",
     name: "stringifiedOptions",
     message: "check contacts to export: ",
