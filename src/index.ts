@@ -2,63 +2,26 @@ import chalk from "chalk";
 import chalkAnimation from "chalk-animation";
 import inquirer from "inquirer";
 import figlet from "figlet";
-import PhoneBook from "./lib/index.js";
+import Menu from "./lib/menu.js";
+import { MenuString } from "./lib/menu.js";
 try {
   console.clear();
-  const Menu = ["Add a contact", "Delete contact", "Search contact", "Edit a contact", "Export contact", "Import contact"];
-  const wellcomeAnimation = chalkAnimation.rainbow(figlet.textSync("PHONE  -  BOOK", {
-    font: "Banner",
-    whitespaceBreak: true
-  }));
-  const startProcess = () => {
-    wellcomeAnimation.stop()
-    inquirer
-      .prompt([{
-        type: "list",
-        message: chalk.bgBlue.white("Select from given menu:-"),
-        name: "Choise",
-        choices: Menu,
-      }])
-      .then(({Choise}) => {
-        console.clear();
-        switch (Choise) {
-          case Menu[0]: {
-            console.log(chalk.bgBlue.white(" Adding a contact. "));
-            PhoneBook.addContact();
-            break;
-          }
-          case Menu[1]: {
-            console.log(chalk.bgBlue.white(" Deleting contact. "));
-            PhoneBook.deleteContact();
-            break;
-          }
-          case Menu[2]: {
-            console.log(chalk.bgBlue.white(" Searching a contact. "));
-            PhoneBook.searchContact();
-            break;
-          }
-          case Menu[3]:{
-            console.log(chalk.bgBlue.white("editing a contact"));
-            PhoneBook.editContact();
-            break;
-          }
-          case Menu[4]: {
-            console.log(chalk.bgBlue.white(" Exporting a contact. "));
-            PhoneBook.exportSelectedContact();
-            break;
-          }
-          case Menu[5]: {
-            console.log(chalk.bgBlue.white(" Importing contact. "));
-            PhoneBook.importContacts();
-            break;
-          }
-          default: {
-            console.log(chalk.red.bold("Invalid option!!!\n Process terminated."));
-            process.exit(0);
-            break;
-          }
-        }
-      });
+  const wellcomeAnimation = chalkAnimation.rainbow(figlet.textSync("PHONE  -  BOOK", { font: "Banner", whitespaceBreak: true }));
+  const startProcess = async () => {
+    wellcomeAnimation.stop();
+    const { Choise } = await inquirer.prompt<{ Choise: MenuString }>([{
+      type: "list",
+      message: chalk.bgBlue.white("Select from given menu:-"),
+      name: "Choise",
+      choices: Object.keys(Menu),
+    }]);
+
+    try {
+      Menu[Choise]();
+    } catch (e) {
+      console.log(chalk.red(figlet.textSync("Invalid Choise !!!", { font: "Banner", whitespaceBreak: true }),`\n ${(e as Error).message}`));
+    }
+
   }
   setTimeout(startProcess, 2000);
 } catch (e) {

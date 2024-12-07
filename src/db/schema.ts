@@ -44,3 +44,5 @@ export type ContactObject = {
   address: string | null;
   birthday: string | null;
 };
+
+export const recordFilter ={};
