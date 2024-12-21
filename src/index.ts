@@ -14,13 +14,7 @@ try {
       name: "Choise",
       choices: Object.keys(Menu),
     }]);
-
-    try {
-      Menu[Choise]();
-    } catch (e) {
-      console.log(chalk.red(figlet.textSync("Invalid Choise !!!", { font: "Banner", whitespaceBreak: true }), `\n ${(e as Error).message}`));
-    }
-
+    Menu[Choise]();
   }
   setTimeout(startProcess, 2000);
 } catch (e) {
