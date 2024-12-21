@@ -16,7 +16,7 @@ const createCard = (item: ContactObject) => {
   if (item.birthday !== null)
     Card.birthday = new Date(item.birthday);
   if (item.address !== null) {
-    const address = addressObject.safeParse(JSON.parse(item.address || "") || "");
+    const address = addressObject.safeParse(JSON.parse(item.address as string) || "");
     if (address.success)
       Card.homeAddress = address.data;
   }

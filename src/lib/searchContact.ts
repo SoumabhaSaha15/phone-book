@@ -7,7 +7,7 @@ import { like, eq } from "drizzle-orm";
 
 const searchContact = async (): Promise<void> => {
   const stringView = (it: ContactObject) => (`@uid:${it.id}) Name: ${it.firstName} ${it.lastName}, Phone number: ${it.phoneNumber} .`);
-  
+
   const searchByPhoneNumber = async () => {
     await inquirer.prompt([{
       type: "input",
@@ -109,7 +109,7 @@ const searchContact = async (): Promise<void> => {
               .from(Contact)
               .where(eq(Contact.id, parseInt(search)))
               .execute()
-          ).map(it => (it.address !== null) ? ({ ...it, address: JSON.parse(it.address) }) : it); //ternery expression converts json string into address object if address is not null
+          ).map(it => (it.address !== null) ? ({ ...it, address: JSON.parse(it.address as string) }) : it); //ternery expression converts json string into address object if address is not null
           return (
             (resultSet.length) ?
               chalk.blue.bold(JSON.stringify(resultSet, null, 2)) :
@@ -133,12 +133,7 @@ const searchContact = async (): Promise<void> => {
     choices: Object.keys(INDEXES),
     default: "phoneNumber"
   }]);
-  try {
-    INDEXES[searchKey]();
-  } catch (e) {
-    console.log(chalk.bgBlack.red.bold((e as Error).message));
-    process.exit(0);
-  }
+  INDEXES[searchKey]();
   process.on('beforeExit', () => {
     console.log(chalk.red.bold(figlet.textSync("Error", { whitespaceBreak: true })));
   })
