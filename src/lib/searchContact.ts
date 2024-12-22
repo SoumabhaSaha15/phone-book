@@ -8,13 +8,13 @@ import { like, eq, Column } from "drizzle-orm";
 const searchContact = async (): Promise<void> => {
 
   const stringView = (it: ContactObject) => (`@uid:${it.id}) Name: ${it.firstName} ${it.lastName}, Phone number: ${it.phoneNumber} .`);
-  const validator = (column: Column, mapper: (it: ContactObject) => string|object) => {
+  const validator = (column: Column, mapper: (it: ContactObject) => string | object) => {
     return async (search: string) => {
       if (search == '$exit') {
         console.clear();
         process.exit(0);
       } else {
-        let resultSet: (string|object)[] = (await db.select().from(Contact).where(like(column, search)).execute()).map(mapper);
+        let resultSet: (string | object)[] = (await db.select().from(Contact).where(like(column, search)).execute()).map(mapper);
         return (resultSet.length) ? chalk.blue.bold(JSON.stringify(resultSet, null, 2)) : chalk.red.bold("No record found")
       }
     };
@@ -49,7 +49,7 @@ const searchContact = async (): Promise<void> => {
       type: "input",
       name: "search",
       message: chalk.blue.bold("Enter last name to search (type '$exit' to exit process): "),
-      validate: validator(Contact.id, (item: ContactObject) =>item),
+      validate: validator(Contact.id, (item: ContactObject) => item),
     }]);
   }
 

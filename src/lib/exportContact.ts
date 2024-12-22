@@ -13,7 +13,7 @@ const createCard = (item: ContactObject) => {
   if (item.email !== null)  Card.email = item.email;
   if (item.birthday !== null) Card.birthday = new Date(item.birthday);
   if (item.address !== null) {
-    const address = addressObject.safeParse(JSON.parse(item.address as string) || "");
+    const address = addressObject.safeParse(item.address);
     if (address.success)  Card.homeAddress = address.data;
   }
   Card.saveToFile(`./exports/${item.firstName + '@uid' + item.id}.vcf`);
@@ -65,7 +65,7 @@ export const exportSelectedContact = async () => {
   stringifiedOptions.forEach((value) => {
     try {
       const id: number | null = JSON.parse(value)?.id || null;
-      if (id != null) records.filter(it => (it.id == id)).forEach(createCard);
+      if (id != null) records.filter(it => (it.id === id)).forEach(createCard);
     } catch (e) {
       console.log(chalk.red.bold(e));
     }
