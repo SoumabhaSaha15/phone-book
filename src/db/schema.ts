@@ -42,7 +42,7 @@ export type ContactObject = {
   lastName: string;
   email: string | null;
   phoneNumber: string;
-  address: string | null | unknown;
+  address: null | z.infer<typeof addressObject>|unknown;
   birthday: string | null;
 };
 
@@ -80,9 +80,7 @@ export const getFilter = async () => {
 export const validatorFactory = <T extends z.ZodRawShape>(picked: z.ZodObject<T>) => {
   return (value: string) => {
     if (typeof value !== 'string') return "you need to provide a string";
-    else {
-      const { success, error } = picked.safeParse({[Object.keys(picked.shape)[0] as string]:value});
-      return (success) ? (true) : (JSON.stringify(error, null, "\t"));
-    }
+    const { success, error } = picked.safeParse({ [Object.keys(picked.shape)[0] as string]: value });
+    return (success) ? (true) : (JSON.stringify(error, null, "\t"));
   }
 };

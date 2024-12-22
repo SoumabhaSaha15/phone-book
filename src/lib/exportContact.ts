@@ -9,16 +9,12 @@ const createCard = (item: ContactObject) => {
   Card.firstName = item.firstName;
   Card.lastName = item.lastName;
   Card.cellPhone = item.phoneNumber;
-  if (item.middleName !== null)
-    Card.middleName = item.middleName;
-  if (item.email !== null)
-    Card.email = item.email;
-  if (item.birthday !== null)
-    Card.birthday = new Date(item.birthday);
+  if (item.middleName !== null) Card.middleName = item.middleName;
+  if (item.email !== null)  Card.email = item.email;
+  if (item.birthday !== null) Card.birthday = new Date(item.birthday);
   if (item.address !== null) {
     const address = addressObject.safeParse(JSON.parse(item.address as string) || "");
-    if (address.success)
-      Card.homeAddress = address.data;
+    if (address.success)  Card.homeAddress = address.data;
   }
   Card.saveToFile(`./exports/${item.firstName + '@uid' + item.id}.vcf`);
   console.log(chalk.blue.bold(`exported ${item.firstName + '@uid' + item.id}.vcf ✅`));
@@ -36,40 +32,27 @@ export const exportSelectedContact = async () => {
 
   if (choice == "Yes") {
     let filter: RecordFilter = await getFilter();
-    records = await db
-      .select()
-      .from(Contact)
-      .where(
+    records = await db.select().from(Contact)
+      .where(and(
         and(
-          and(
-            like(Contact.firstName, filter.firstName),
-            like(Contact.lastName, filter.lastName)
-          ),
-          like(Contact.phoneNumber, filter.phoneNumber)
-        )
-      )
-      .execute();
+          like(Contact.firstName, filter.firstName),
+          like(Contact.lastName, filter.lastName)
+        ),like(Contact.phoneNumber, filter.phoneNumber)
+      )).execute();
     if (!records.length) {
       console.log(chalk.red.bold('No such records.'));
       process.exit(0);
     }
   } else {
-    records = await db
-      .select()
-      .from(Contact)
-      .execute();
+    records = await db.select().from(Contact).execute();
     if (!records.length) {
       console.log(chalk.red.bold('No such records.'));
       process.exit(0);
     }
   }
-  const options = records.map(it => (it.middleName != null) ? ({
+  const options = records.map(it => ({
     id: it.id,
-    Name: `${it.firstName} ${it.middleName} ${it.lastName}`,
-    phoneNumber: it.phoneNumber
-  }) : ({
-    id: it.id,
-    Name: `${it.firstName} ${it.lastName}`,
+    Name: `${it.firstName} ${it.middleName||''} ${it.lastName}`,
     phoneNumber: it.phoneNumber
   }));
   const { stringifiedOptions } = await inquirer.prompt<{ stringifiedOptions: string[] }>([{
@@ -78,15 +61,11 @@ export const exportSelectedContact = async () => {
     message: "check contacts to export: ",
     choices: options.map(it => JSON.stringify(it)),
   }]);
-
   console.clear();
   stringifiedOptions.forEach((value) => {
     try {
       const id: number | null = JSON.parse(value)?.id || null;
-      if (id != null)
-        records
-          .filter(it => (it.id == id))
-          .forEach(createCard);
+      if (id != null) records.filter(it => (it.id == id)).forEach(createCard);
     } catch (e) {
       console.log(chalk.red.bold(e));
     }

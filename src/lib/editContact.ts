@@ -10,28 +10,16 @@ const editContact = async (): Promise<void> => {
   records = await db
     .select()
     .from(Contact)
-    .where(
-      and(
-        and(
-          like(Contact.firstName, filter.firstName),
-          like(Contact.lastName, filter.lastName)
-        ),
-        like(Contact.phoneNumber, filter.phoneNumber)
-      )
-    )
+    .where(and(and(like(Contact.firstName, filter.firstName), like(Contact.lastName, filter.lastName)), like(Contact.phoneNumber, filter.phoneNumber)))
     .execute();
   if (!records.length) {
     console.log(chalk.red.bold('No such records.'));
     process.exit(0);
   }
 
-  const options = records.map(it => (it.middleName != null) ? ({
+  const options = records.map(it => ({
     id: it.id,
-    Name: `${it.firstName} ${it.middleName} ${it.lastName}`,
-    phoneNumber: it.phoneNumber
-  }) : ({
-    id: it.id,
-    Name: `${it.firstName} ${it.lastName}`,
+    Name: `${it.firstName} ${it.middleName || ''} ${it.lastName}`,
     phoneNumber: it.phoneNumber
   }));
   const { stringifiedOptions } = await inquirer.prompt<{ stringifiedOptions: string[] }>([{
@@ -59,27 +47,20 @@ const editContact = async (): Promise<void> => {
                 default: JSON.stringify(it, null, 2),
                 name: "editable",
                 message: `edit ${item.firstName}'s contact`,
-              }])
-              .then(({ editable }) => {
+              }]).then(({ editable }) => {
                 let edited = JSON.parse(editable);
-                (edited["id"]) ? ((() => { delete edited.id; })()) : ((() => { })()); //empty function
-                if (edited["address"] !== null) {
-                  if (typeof edited["address"] == "string") {
-                    edited["address"] = JSON.parse(edited["address"]);
-                  }
-                }
+                (edited["id"] && (delete edited.id));
+                if (edited["address"] !== null && typeof edited["address"] == "string") edited["address"] = JSON.parse(edited["address"]);
                 ContactValidator.parse(edited);
                 db.update(Contact)
                   .set({ ...edited, address: (edited.address) ? JSON.stringify(edited.address) : null })
-                  .where(eq(Contact.id, item.id))
-                  .execute()
+                  .where(eq(Contact.id, item.id)).execute()
                   .then(data => {
                     console.log(chalk.blue.bold(JSON.stringify(data, null, 2)));
-                  }).catch((err: { message: string }) => {
+                  }).catch((err: Error) => {
                     console.log(chalk.red.bold(err.message));
                   });
-              })
-              .catch((err: { message: string }) => {
+              }).catch((err: { message: string }) => {
                 console.log(chalk.red.bold(err.message));
               });
           });

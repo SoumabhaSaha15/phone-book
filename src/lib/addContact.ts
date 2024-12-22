@@ -9,6 +9,11 @@ import figlet from "figlet";
 import Database from "better-sqlite3";
 const addContact = async (): Promise<void> => {
 
+  const blackGreenBoldLog = (...params: any[]): void => {
+    const logger = (log: string) => console.log(chalk.bgBlack.greenBright.bold(log));
+    params.forEach(item => logger((typeof item === 'object') ? JSON.stringify(item, null, "\t") : item));
+  };
+
   let getData: z.infer<typeof ContactValidator> = await inquirer.prompt<z.infer<typeof ContactValidator>>([
     {
       type: "input",
@@ -56,7 +61,7 @@ const addContact = async (): Promise<void> => {
     default: 'No'
   }]).then(async ({ confirm }) => {
 
-    if (confirm === 'Yes') {
+    if (confirm === 'Yes')
       getData.address = await inquirer.prompt<z.infer<typeof addressObject>>([
         {
           type: "input",
@@ -95,63 +100,27 @@ const addContact = async (): Promise<void> => {
           validate: validatorFactory(addressObject.pick({ street: true }))
         },
       ]);
-    } else getData.address = null;
+    else getData.address = null;
     if (getData?.middleName === '') getData.middleName = null;
     if (getData?.email === '') getData.email = null;
     if (getData.birthday === '') getData.birthday = null;
-
+    ContactValidator.parse(getData);
+    console.clear();
     try {
-      ContactValidator.parse(getData);
-      try {
-        const stringified_address = getData.address ? (JSON.stringify(getData.address)) : (null);
-        let result: Database.RunResult;
-        if (stringified_address == null) result = await db.insert(Contact).values({ ...getData, address: null }).execute();
-        else result = await db.insert(Contact).values({ ...getData, address: stringified_address }).execute();
-        console.clear();
-        const lastInserted = (
-          await db
-            .select()
-            .from(Contact)
-            .where(eq(Contact.id, result.lastInsertRowid as number))
-        )[0];
-        console.log(
-          chalk
-            .bgBlack
-            .greenBright
-            .bold(
-              `Contact successfully added, id: ${result.lastInsertRowid
-              }.\n${JSON.stringify(
-                {
-                  ...lastInserted,
-                  address: (stringified_address != null) ? JSON.parse(lastInserted.address as string) : (null)
-                },
-                null,
-                "\t"
-              )
-              }.`
-            )
-        );
-
-      } catch (err) {
-        console.log(chalk.red.bold(JSON.stringify(err, null, "\t")));
-      }
+      const result: Database.RunResult = await db.insert(Contact).values(getData).execute();
+      const lastInserted = (await db.select().from(Contact).where(eq(Contact.id, result.lastInsertRowid as number)).limit(1)).pop();
+      if (!lastInserted) throw Error('Contact not inserted!!!');
+      blackGreenBoldLog(`Contact successfully added, id: ${result.lastInsertRowid}.\n`, lastInserted);
     } catch (error) {
-      console.log(chalk.red.bold(JSON.stringify((error as ZodError), null, "\t")))
+      console.log(chalk.red.bold(JSON.stringify(error, null, "\t")));
     }
 
+  }).catch((error) => {
+    console.log(chalk.red.bold(JSON.stringify((error as ZodError), null, "\t")));
   }).finally(() => {
-    const rainbow = chalkAnimation.rainbow(
-      figlet
-        .textSync(
-          'Process ended.',
-          { whitespaceBreak: true }
-        )
-    );
-    setTimeout(() => {
-      rainbow.stop();
-    }, 2000);
-  }
-  );
+    const rainbow = chalkAnimation.rainbow(figlet.textSync('Process ended.', { whitespaceBreak: true }));
+    setTimeout(() => { rainbow.stop(); }, 2000);
+  });
 
 };
 export default addContact;
