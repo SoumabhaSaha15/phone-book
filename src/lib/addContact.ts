@@ -8,12 +8,10 @@ import { eq } from "drizzle-orm";
 import figlet from "figlet";
 import Database from "better-sqlite3";
 const addContact = async (): Promise<void> => {
-
   const blackGreenBoldLog = (...params: any[]): void => {
     const logger = (log: string) => console.log(chalk.bgBlack.greenBright.bold(log));
     params.forEach(item => logger((typeof item === 'object') ? JSON.stringify(item, null, "\t") : item));
   };
-
   let getData: z.infer<typeof ContactValidator> = await inquirer.prompt<z.infer<typeof ContactValidator>>([
     {
       type: "input",
@@ -52,7 +50,6 @@ const addContact = async (): Promise<void> => {
       validate: validatorFactory(ContactValidator.pick({ birthday: true }))
     },
   ]);
-
   inquirer.prompt([{
     type: "list",
     name: "confirm",
@@ -60,7 +57,6 @@ const addContact = async (): Promise<void> => {
     choices: ['Yes', 'No'],
     default: 'No'
   }]).then(async ({ confirm }) => {
-
     if (confirm === 'Yes')
       getData.address = await inquirer.prompt<z.infer<typeof addressObject>>([
         {
@@ -114,13 +110,11 @@ const addContact = async (): Promise<void> => {
     } catch (error) {
       console.log(chalk.red.bold(JSON.stringify(error, null, "\t")));
     }
-
-  }).catch((error) => {
-    console.log(chalk.red.bold(JSON.stringify((error as ZodError), null, "\t")));
+  }).catch((error: ZodError) => {
+    console.log(chalk.red.bold(JSON.stringify(error, null, "\t")));
   }).finally(() => {
     const rainbow = chalkAnimation.rainbow(figlet.textSync('Process ended.', { whitespaceBreak: true }));
     setTimeout(() => { rainbow.stop(); }, 2000);
   });
-
 };
 export default addContact;

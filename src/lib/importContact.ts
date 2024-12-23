@@ -38,8 +38,7 @@ const importContacts = async (): Promise<void> => {
       };
       console.log(contact);
       try {
-        ContactValidator.parse(contact);
-        const result = await db.insert(Contact).values(contact).execute();
+        const result = await db.insert(Contact).values(ContactValidator.parse(contact)).execute();
         console.log(result);
       } catch (error) {
         console.log(chalk.red.bold((error as Error).message));
@@ -47,6 +46,5 @@ const importContacts = async (): Promise<void> => {
     });
     fs.renameSync(`./imports/${file}`, `./imports/compleated.${file}`);
   });
-
 }
 export default importContacts;

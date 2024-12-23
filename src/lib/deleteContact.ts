@@ -5,9 +5,7 @@ import chalk from "chalk";
 import { and, like, eq } from "drizzle-orm";
 const deleteContact = async (): Promise<void> => {
   let filter: RecordFilter = await getFilter();
-  const records = await db
-    .select()
-    .from(Contact)
+  const records = await db.select().from(Contact)
     .where(
       and(
         and(
@@ -16,21 +14,14 @@ const deleteContact = async (): Promise<void> => {
         ),
         like(Contact.phoneNumber, filter.phoneNumber)
       )
-    )
-    .execute();
-
+    ).execute();
   if (records.length === 0) {
     console.log(chalk.redBright.bold("no record found"));
     process.exit(0);
   }
-
-  const options = records.map(it => (it.middleName != null) ? ({
+  const options = records.map(it => ({
     id: it.id,
-    Name: `${it.firstName} ${it.middleName} ${it.lastName}`,
-    phoneNumber: it.phoneNumber
-  }) : ({
-    id: it.id,
-    Name: `${it.firstName} ${it.lastName}`,
+    Name: `${it.firstName} ${it.middleName || ""} ${it.lastName}`,
     phoneNumber: it.phoneNumber
   }));
   const { stringifiedOptions } = await inquirer.prompt<{ stringifiedOptions: string[] }>([{
@@ -39,30 +30,19 @@ const deleteContact = async (): Promise<void> => {
     message: "check contacts to export: ",
     choices: options.map(it => JSON.stringify(it)),
   }]);
-
-
   console.clear();
   stringifiedOptions.forEach((value) => {
     try {
-      const id: number | null = JSON.parse(value)?.id || null;
-      if (id != null)
-        records
-          .filter(it => (it.id == id))
-          .forEach(({ id }) => {
-            db.delete(Contact)
-              .where(eq(Contact.id, id))
-              .execute()
-              .then(() => {
-                console.log(chalk.blueBright.bold(`contact with uid: ${id} deleted.`));
-              })
-              .catch(err => {
-                console.log(chalk.redBright.bold('!!!error occured'));
-              });
-          });
-    } catch (e) {
-      console.log(chalk.red.bold(e));
+      records.filter(it => (it.id === JSON.parse(value)?.id)).forEach(({ id }) => {
+        db.delete(Contact).where(eq(Contact.id, id)).execute().then(() => {
+          console.log(chalk.blueBright.bold(`contact with uid: ${id} deleted.`));
+        }).catch((error: Error) => {
+          console.log(chalk.redBright.bold('!!!error occured\n' + error.message));
+        });
+      });
+    } catch (error) {
+      console.log(chalk.red.bold((error as Error).message));
     }
   });
-
 }
 export default deleteContact;

@@ -19,7 +19,6 @@ const createCard = (item: ContactObject) => {
   Card.saveToFile(`./exports/${item.firstName + '@uid' + item.id}.vcf`);
   console.log(chalk.blue.bold(`exported ${item.firstName + '@uid' + item.id}.vcf ✅`));
 }
-
 export const exportSelectedContact = async () => {
   let records: ContactObject[];
   const { choice } = await inquirer.prompt<{ choice: string }>([{
@@ -29,8 +28,7 @@ export const exportSelectedContact = async () => {
     choices: ["Yes", "No"],
     default: "Yes"
   }]);
-
-  if (choice == "Yes") {
+  if (choice === "Yes") {
     let filter: RecordFilter = await getFilter();
     records = await db.select().from(Contact)
       .where(and(
@@ -64,11 +62,9 @@ export const exportSelectedContact = async () => {
   console.clear();
   stringifiedOptions.forEach((value) => {
     try {
-      const id: number | null = JSON.parse(value)?.id || null;
-      if (id != null) records.filter(it => (it.id === id)).forEach(createCard);
-    } catch (e) {
-      console.log(chalk.red.bold(e));
+      records.filter(it => (it.id === JSON.parse(value)?.id)).forEach(createCard);
+    } catch (error) {
+      console.log(chalk.red.bold((error as Error).message));
     }
   });
-
 }
