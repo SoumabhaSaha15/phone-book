@@ -20,7 +20,7 @@ try {
     setTimeout(startProcess, 2000);
   } else {
     if (Object.keys(Commands).includes(process.argv[2]) && process.argv.length === 3) {
-      console.log(chalk.blue(figlet.textSync(process.argv[2], { whitespaceBreak: true })));
+      console.log(chalk.blue(figlet.textSync(process.argv[2].toLocaleUpperCase(), { whitespaceBreak: true })));
       Commands[process.argv[2] as CommandString]();
     } else throw new Error(chalk.red(figlet.textSync("\nInvalid command", { whitespaceBreak: true })));
   }

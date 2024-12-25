@@ -8,7 +8,7 @@ const Menu: Record<MenuString, Function> = {
   "Edit a contact": PhoneBook.editContact,
   "Export contact": PhoneBook.exportSelectedContact,
   "Import contact": PhoneBook.importContacts,
-};
+} as const;
 export const Commands:Record<CommandString,Function> = {
   "add": PhoneBook.addContact,
   "delete": PhoneBook.deleteContact,
@@ -16,5 +16,5 @@ export const Commands:Record<CommandString,Function> = {
   "edit": PhoneBook.editContact,
   "export": PhoneBook.exportSelectedContact,
   "import": PhoneBook.importContacts,
-};
+} as const;
 export default Menu;

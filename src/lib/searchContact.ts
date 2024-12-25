@@ -6,14 +6,14 @@ import figlet from "figlet";
 import { like, Column } from "drizzle-orm";
 const searchContact = async (): Promise<void> => {
   const stringView = (it: ContactObject) => (`@uid:${it.id}) Name: ${it.firstName} ${it.lastName}, Phone number: ${it.phoneNumber} .`);
-  const validator = (column: Column, mapper: (it: ContactObject) => string | object) => {
+  const validator = (column: Column, mapper: (it: ContactObject) => any) => {
     return async (search: string) => {
       if (search === '$exit') {
         console.clear();
         process.exit(0);
       }
-      let resultSet: (string | object)[] = (await db.select().from(Contact).where(like(column, search)).execute()).map(mapper);
-      return (resultSet.length) ? chalk.blue.bold(JSON.stringify(resultSet, null, 2)) : chalk.red.bold("No record found")
+      let resultSet: any[] = (await db.select().from(Contact).where(like(column, search)).execute()).map(mapper);
+      return (resultSet.length) ? chalk.blue.bold(JSON.stringify(resultSet, null, 2)) : chalk.red.bold("No record found");
     };
   }
   const searchByPhoneNumber = async () => {
@@ -54,7 +54,7 @@ const searchContact = async (): Promise<void> => {
     "firstName": searchByFirstName,
     "lastName": searchByLastName,
     "UniqueId": searchByUniqueId
-  };
+  } as const;
   const keys = Object.keys(INDEXES);
   const { searchKey } = await inquirer.prompt<{ searchKey: string }>([{
     type: "list",
