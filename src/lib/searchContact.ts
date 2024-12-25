@@ -8,7 +8,7 @@ const searchContact = async (): Promise<void> => {
   const stringView = (it: ContactObject) => (`@uid:${it.id}) Name: ${it.firstName} ${it.lastName}, Phone number: ${it.phoneNumber} .`);
   const validator = (column: Column, mapper: (it: ContactObject) => string | object) => {
     return async (search: string) => {
-      if (search == '$exit') {
+      if (search === '$exit') {
         console.clear();
         process.exit(0);
       }
@@ -41,7 +41,7 @@ const searchContact = async (): Promise<void> => {
     }]);
   }
   const searchByUniqueId = async () => {
-    console.log(chalk.yellow.bold(`This will give you full detail.`));
+    console.log(chalk.yellow.bold(`This option will provide you all details.`));
     await inquirer.prompt([{
       type: "input",
       name: "search",
