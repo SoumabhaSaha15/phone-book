@@ -1,5 +1,5 @@
-import { integer, text, sqliteTable, } from "drizzle-orm/sqlite-core";
-import { string, z, ZodError, } from "zod";
+import { integer, text, sqliteTable } from "drizzle-orm/sqlite-core";
+import { z } from "zod";
 import inquirer from "inquirer";
 export const Contact = sqliteTable('Contact', {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -42,7 +42,7 @@ export type ContactObject = {
   lastName: string;
   email: string | null;
   phoneNumber: string;
-  address: null | z.infer<typeof addressObject>|unknown;
+  address: null | z.infer<typeof addressObject> | unknown;
   birthday: string | null;
 };
 
