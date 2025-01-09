@@ -73,8 +73,7 @@ export const getFilter = async () => {
 };
 /**
  * @name validatorFactory
- * @param validator 
- * @param picked 
+ * @param {z.ZodObject<T extends z.ZodRawShape>} picked
  * @description picks the required field (only one at a time) from the validator and validates the input
  */
 export const validatorFactory = <T extends z.ZodRawShape>(picked: z.ZodObject<T>) => {
