@@ -25,7 +25,7 @@ const importContacts = async (): Promise<void> => {
         lastName: name.pop() || ``,
         middleName: name.join(" ") || null,
         email: card.EMAIL ? (card.EMAIL?.at(0)?.value) : (null),
-        phoneNumber: card.TEL ? card.TEL[0].value : ``,
+        phoneNumber: card.TEL ? card.TEL[0].value.replace(/\s/g,'') : ``,
         address: card.ADR ? ({
           label: card?.ADR?.at(0)?.parameters?.TYPE?.at(0) || ``,
           street: (card.ADR[0].value?.streetAddress?.at(0)) || ``,
